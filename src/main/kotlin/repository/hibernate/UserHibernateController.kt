@@ -15,7 +15,7 @@ class UserHibernateController(
         return entityManagerFactory.createEntityManager()
     }
 
-    fun editUsers(user: User) {
+    fun editResident(user: Resident) {
         var em = getEntityManager()
         try {
             em = getEntityManager()
@@ -83,16 +83,18 @@ class UserHibernateController(
 
     fun getResidentById(id: Int) : Resident? {
         var em = getEntityManager()
-        var resident: Resident? = null
-        try {
-            em = getEntityManager()
-            em.transaction.begin()
-            resident = em.find(Resident::class.java, id)
-            em.transaction.commit()
-        } catch (e: java.lang.Exception) {
-            println("No such Resident")
+        val cb = em.criteriaBuilder
+        val criteriaQuery = cb.createQuery(Resident::class.java)
+        val root = criteriaQuery.from(Resident::class.java)
+        criteriaQuery.select(root).where(cb.equal(root.get<Int>("userId"), id))
+        val query: Query = em.createQuery(criteriaQuery)
+        return try {
+            return query.singleResult as Resident
+        } catch (e: NoResultException) {
+            println("Could not find such resident")
+            null
         }
-        return resident
+
     }
 
 }

@@ -17,15 +17,21 @@ class DormitorySerializer() {
             val gsonBuilder = GsonBuilder()
             gsonBuilder.registerTypeAdapter(Room::class.java, roomSerializer)
             val roomsArray = JsonArray()
+            val announcementsArray = JsonArray()
             val parser = gsonBuilder.create()
             dormitory.rooms.forEach {
                 roomsArray.add(parser.toJsonTree(it))
+            }
+
+            dormitory.announcements.forEach {
+                announcementsArray.add(parser.toJsonTree(it))
             }
             val dormitoryJson = JsonObject()
             dormitoryJson.addProperty("dormitoryId", dormitory.dormitoryId.toString())
             dormitoryJson.addProperty("address", dormitory.address)
             dormitoryJson.addProperty("university", dormitory.university)
             dormitoryJson.add("rooms", roomsArray)
+            dormitoryJson.add("announcements", announcementsArray)
             dormitoryJson
         }
         return serializer

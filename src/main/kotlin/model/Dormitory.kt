@@ -13,6 +13,9 @@ open class Dormitory() {
     @OneToMany(mappedBy = "dormitory", cascade = [CascadeType.ALL], orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     open var rooms: MutableList<Room> = mutableListOf()
+    @OneToMany(mappedBy = "dormitory", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    open var announcements: MutableList<Announcement> = mutableListOf()
     open var university: String = ""
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")

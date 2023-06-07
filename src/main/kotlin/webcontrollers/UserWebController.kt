@@ -1,6 +1,7 @@
 package webcontrollers
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import enums.RequestStatus
 import model.Resident
 import model.User
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import repository.hibernate.RoomHibernateController
 import repository.hibernate.UserHibernateController
+import tools.serializers.UserSerializer
 import java.util.*
 import javax.persistence.EntityManagerFactory
 import javax.persistence.Persistence
@@ -25,12 +27,13 @@ class UserWebController() {
     @ResponseBody
     fun getUserByCredentials(@RequestBody credentials: String) : String {
         val gson = Gson()
+        val parser = GsonBuilder().registerTypeAdapter(Resident::class.java, UserSerializer().getResidentJsonSerializer()).create()
         val properties = gson.fromJson(credentials, Properties::class.java)
         val user = userHibernateController.getUserByLoginData(
             properties.getProperty("login"),
             properties.getProperty("password")
         )
-        return gson.toJson(user)
+        return parser.toJson(user)
     }
 
     @RequestMapping(value = ["/user/registration"], method = [RequestMethod.POST])
@@ -39,7 +42,7 @@ class UserWebController() {
     fun createNewResident(@RequestBody request: String?): String {
         val gson = Gson()
         val properties = gson.fromJson(request, Properties::class.java)
-        val resident = User(
+        val resident = Resident(
             username = properties.getProperty("username"),
             password = properties.getProperty("password"),
             name = properties.getProperty("name"),

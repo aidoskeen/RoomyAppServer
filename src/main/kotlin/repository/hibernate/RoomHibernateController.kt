@@ -93,7 +93,7 @@ class RoomHibernateController(
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteriaQuery = criteriaBuilder.createQuery(Room::class.java)
         val root = criteriaQuery.from(Room::class.java)
-        val inClause = criteriaBuilder.`in`(root.get<Int>("dorm_num"))
+        val inClause = criteriaBuilder.`in`(root.get<Int>("dormitory_dormitoryId"))
         val dormitory: Dormitory = entityManager.getReference(Dormitory::class.java, id)
         dormitory.rooms.forEach { room ->
             inClause.value(room.roomNumber)
@@ -106,5 +106,18 @@ class RoomHibernateController(
         } catch (e: NoResultException) {
             null
         }
+    }
+
+    fun getRoomById(id: Int) : Room? {
+        val em = getEntityManager()
+        var room: Room? = null
+        try {
+            em.transaction.begin()
+            room = em.find(Room::class.java, id)
+            em.transaction.commit()
+        } catch (e: java.lang.Exception) {
+            println("Place doesn't exist")
+        }
+        return room
     }
 }

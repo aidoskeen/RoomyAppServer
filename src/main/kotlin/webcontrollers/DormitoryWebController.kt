@@ -1,10 +1,13 @@
 package webcontrollers
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import enums.PaymentStatus
+import model.Announcement
 import model.Dormitory
 import model.MonthlyPayment
+import model.User
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -13,6 +16,7 @@ import repository.hibernate.RoomHibernateController
 import tools.serializers.DormitorySerializer
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.persistence.EntityManagerFactory
 import javax.persistence.Persistence
 
@@ -41,6 +45,22 @@ class DormitoryWebController() {
             parser.toJson(dormitories)
         }
         else ""
+    }
+
+    @RequestMapping(value = ["/dormitory/newAnnouncement"], method = [RequestMethod.POST])
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    fun createNewAnnouncement(@RequestBody request: String?): String {
+        val gson = Gson()
+        val properties = gson.fromJson(request, Properties::class.java)
+        val announcement = Announcement(
+            title = properties.getProperty("title"),
+            text = properties.getProperty("text")
+        )
+
+        return if (dormitoryHibernateController.addNewAnnouncement(announcement))
+            "Success"
+        else "Error"
     }
 
 }

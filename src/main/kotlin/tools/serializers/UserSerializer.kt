@@ -12,14 +12,13 @@ class UserSerializer {
                 resident: Resident,
                 _: Type,
                 _: JsonSerializationContext ->
-            val roomJson = JsonObject()
-            roomJson.addProperty("usedId", resident.userId)
-            roomJson.addProperty("name", resident.name)
-            roomJson.addProperty("surname", resident.surname)
-            roomJson.addProperty("username", resident.username)
-            roomJson.addProperty("password", resident.password)
-            roomJson.addProperty("roomNumber", resident.roomNumber)
-            roomJson
+            val userJson = JsonObject()
+            userJson.addProperty("userId", resident.userId)
+            userJson.addProperty("name", resident.name)
+            userJson.addProperty("surname", resident.surname)
+            userJson.addProperty("username", resident.username)
+            userJson.addProperty("password", resident.password)
+            userJson
         }
         return serializer
     }
